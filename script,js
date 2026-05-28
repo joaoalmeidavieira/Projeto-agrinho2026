@@ -1,1 +1,52 @@
+document.addEventListener('DOMContentLoaded', () => {
+    const navLinks = document.querySelectorAll('.nav-link');
+    const sections = document.querySelectorAll('.page-section');
+    const menuToggle = document.getElementById('menuToggle');
+    const navMenu = document.getElementById('navMenu');
 
+    // NAVEGAÇÃO SPA (Alternância de Páginas Ativas)
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+
+            // Fecha o menu mobile caso esteja aberto ao clicar
+            navMenu.classList.remove('open');
+            menuToggle.classList.remove('open');
+
+            // Atualiza o estado visual do menu superior
+            navLinks.forEach(l => l.classList.remove('active'));
+            link.classList.add('active');
+
+            // Altera a visibilidade das seções
+            const targetId = link.getAttribute('data-target');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+
+            const targetSection = document.getElementById(targetId);
+            if (targetSection) {
+                targetSection.classList.add('active');
+                // Retorna suavemente para o topo da página ao mudar de aba
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+
+    // CONTROLE DO MENU RESPONSIVO (HAMBURGUER)
+    menuToggle.addEventListener('click', () => {
+        navMenu.classList.toggle('open');
+        menuToggle.classList.toggle('open');
+    });
+
+    // Se o usuário acessar via link direto (ex: site.com/#agrinho), abre na aba certa automaticamente
+    const currentHash = window.location.hash.replace('#', '');
+    if (currentHash) {
+        const initialLink = document.querySelector(`[data-target="${currentHash}"]`);
+        if (initialLink) {
+            initialLink.click();
+        }
+    }
+});
